@@ -16,26 +16,68 @@ function calcularResultado(operacion, numero1, numero2) {
 function mostrarResultados(resultados) {
     const resultadosDiv = document.getElementById("resultados");
     resultadosDiv.innerHTML = `<p>Resultado: ${resultados}</p>`;
-}
+    }
 
 function guardarOperacionEnStorage(operacion) {
     const operacionesGuardadas = JSON.parse(localStorage.getItem("operaciones")) || [];
-    operacionesGuardadas.push(operacion);
+    const fechaHoraActual = new Date().toLocaleString();
+    operacionesGuardadas.push({ operacion: operacion, favorito: false, fecha: fechaHoraActual });
     localStorage.setItem("operaciones", JSON.stringify(operacionesGuardadas));
+
+}
+
+function borrarResultadoDelHistorial(index) {
+    const operacionesGuardadas = JSON.parse(localStorage.getItem("operaciones")) || [];
+
+    if (index >= 0 && index < operacionesGuardadas.length) {
+        if (!operacionesGuardadas[index].favorito) {
+            operacionesGuardadas.splice(index, 1);
+            localStorage.setItem("operaciones", JSON.stringify(operacionesGuardadas));
+            mostrarOperacionesGuardadas();
+        } else {
+            console.error('No puedes borrar una operación favorita.');
+        }
+    } else {
+        console.error('Índice de historial no válido.');
+    }
+}
+
+function marcarComoFavorito(index) {
+    const operacionesGuardadas = JSON.parse(localStorage.getItem("operaciones")) || [];
+
+    if (index >= 0 && index < operacionesGuardadas.length) {
+        operacionesGuardadas[index].favorito = !operacionesGuardadas[index].favorito || false;
+        localStorage.setItem("operaciones", JSON.stringify(operacionesGuardadas));
+        mostrarOperacionesGuardadas();
+    } else {
+        console.error('Índice de historial no válido.');
+    }
 }
 
 function mostrarOperacionesGuardadas() {
-    const operacionesGuardadas = JSON.parse(localStorage.getItem("operaciones"));
+    const filtro = document.getElementById("filtroHistorial").value;
+    const operacionesGuardadas = JSON.parse(localStorage.getItem("operaciones")) || [];
     const historialDiv = document.getElementById("historial");
     historialDiv.innerHTML = "<h2>Historial de Operaciones</h2>";
-    if (operacionesGuardadas) {
+
+    if (operacionesGuardadas.length > 0) {
         operacionesGuardadas.forEach((operacion, index) => {
-            historialDiv.innerHTML += `<p>${operacion}</p>`;
+            if ((filtro === "normales" && !operacion.favorito) || (filtro === "favoritas" && operacion.favorito) || filtro === "todos") {
+                const favorito = operacion.favorito ? 'Desmarcar' : 'Marcar';
+                const operacionHTML = `<p>
+                    ${operacion.operacion} 
+                    <br>Fecha y Hora: ${operacion.fecha || "No disponible"}
+                    <button onclick="borrarResultadoDelHistorial(${index})" ${operacion.favorito ? 'disabled' : ''}>Borrar</button>
+                    <button onclick="marcarComoFavorito(${index})">${favorito} como Favorito</button>
+                    </p>`;
+                historialDiv.innerHTML += operacionHTML;
+            }
         });
     } else {
         historialDiv.innerHTML += "<p>No hay operaciones en el historial.</p>";
     }
 }
+
 
 function limpiarHistorial() {
     localStorage.removeItem("operaciones");
@@ -56,6 +98,9 @@ function handleCalcular(operacion) {
         alert("Ingresa números válidos.");
     }
 }
+
+
+
 
 document.getElementById("calcularSuma").addEventListener("click", () => handleCalcular("suma"));
 document.getElementById("calcularResta").addEventListener("click", () => handleCalcular("resta"));

@@ -3,19 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proyecto final --  Calculadora aun mas desarrollada</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
     <h1>Calculadora Interactiva</h1>
 
     <div id="resultados">
+    
+    </div>
 
+    <div>
+        <label>Filtrar por:</label>
+        <select id="filtroHistorial" onchange="mostrarOperacionesGuardadas()">
+            <option value="todos">Todos</option>
+            <option value="normales">Operaciones Normales</option>
+            <option value="favoritas">Operaciones Favoritas</option>
+        </select>
     </div>
 
     <div id="historial">
         <h2>Historial de Operaciones</h2>
+    
     </div>
+
+
 
     <button id="calcularSuma">Sumar</button>
     <button id="calcularResta">Restar</button>
@@ -25,7 +37,8 @@
 
     <input type="number" id="numero1" placeholder="Número 1">
     <input type="number" id="numero2" placeholder="Número 2">
-    
+
     <script src="main.js"></script>
+
 </body>
 </html>
